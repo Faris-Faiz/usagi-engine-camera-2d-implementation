@@ -1,18 +1,5 @@
+local Camera = require("camera")
 local LevelData = usagi.read_json("levels.json")
-
-local function color_from_name(name)
-  if name == "GREEN" then return gfx.COLOR_GREEN end
-  if name == "BROWN" then return gfx.COLOR_BROWN end
-  if name == "DARK_BLUE" then return gfx.COLOR_DARK_BLUE end
-  if name == "YELLOW" then return gfx.COLOR_YELLOW end
-  if name == "DARK_GREEN" then return gfx.COLOR_DARK_GREEN end
-  if name == "DARK_GRAY" then return gfx.COLOR_DARK_GRAY end
-  if name == "LIGHT_GRAY" then return gfx.COLOR_LIGHT_GRAY end
-  if name == "INDIGO" then return gfx.COLOR_INDIGO end
-  if name == "PEACH" then return gfx.COLOR_PEACH end
-
-  return gfx.COLOR_WHITE
-end
 
 function _config()
   return { name = "Keyboard Rectangle" }
@@ -47,10 +34,7 @@ function _init()
       --color = gfx.COLOR_LIGHT_GRAY
     },
 
-    camera = {
-      x = 0,
-      y = 0
-    },
+    camera = Camera.new(),
 
     map = {
       w = cols * tile_size,
@@ -112,13 +96,7 @@ function _update(_dt)
   p.x = util.clamp(p.x, 0, map.w - p.w)
   p.y = util.clamp(p.y, 0, map.h - p.h)
 
-  -- camera targets the player's center
-  local player_center_x = p.x + p.w / 2
-  local player_center_y = p.y + p.h / 2
-
-  -- camera on player, used later in _draw function to re-position camera
-  cam.x = player_center_x - usagi.GAME_W / 2
-  cam.y = player_center_y - usagi.GAME_H / 2
+  cam:follow(p)
 end
 
 function _draw(_dt)
@@ -140,14 +118,12 @@ function _draw(_dt)
       local world_x = (col - 1) * tile_size
       local world_y = (row - 1) * tile_size
 
-      local screen_x = world_x - cam.x
-      local screen_y = world_y - cam.y
+      local screen_x, screen_y = cam:to_screen(world_x, world_y)
 
       gfx.spr(sprite_index, screen_x, screen_y)
     end
   end
-  local screen_x = p.x - cam.x
-  local screen_y = p.y - cam.y
+  local screen_x, screen_y = cam:to_screen(p.x, p.y)
 
   -- reposition camera based on parsed player and camera positions from _update function
   ---gfx.rect_fill(screen_x, screen_y, p.w, p.h, p.color)
