@@ -1,6 +1,6 @@
 # 2D Camera Implementation — Usagi Dev
 
-A top-down 2D game demonstrating a camera that follows the player across a tile-based map. Built with the [Usagi Dev](https://usagi.gg) engine using Lua.
+A top-down 2D game demonstrating a camera that follows the player across a tile-based map. Built with the [Usagi Dev](https://usagiengine.com/) engine using Lua.
 
 ---
 
